@@ -13,13 +13,13 @@ struct ContentView: View {
     var body: some View {
         NavigationStack{
             Form {
-                NavigationLink(destination: MangaList()){
+                NavigationLink(destination: MangaList(path: .documentsDirectory)){
                     HStack{
-                        Image(systemName: "book.fill")
+                        Image(systemName: "books.vertical.fill")
                         Text("Mangas")
                     }
                 }
-                NavigationLink(destination: MangaList()){
+                NavigationLink(destination: MangaList(path: .documentsDirectory)){
                     HStack{
                         Image(systemName:"play.rectangle.fill")
                         Text("Videos")
