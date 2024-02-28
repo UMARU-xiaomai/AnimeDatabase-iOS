@@ -49,9 +49,9 @@ func listFiles<T>(atPath path: URL, passResult: (T) -> Void, passDirectory: (Fol
                     let fileName = item.lastPathComponent
                     let fileExtension = item.pathExtension
                     print("[Msg]File Name: \(fileName), Extension: \(fileExtension)")
-                    if T.self == Manga.self {
+                    if T.self == Manga.self && fileExtension == "pdf"{
                         passResult(Manga(path: item) as! T)
-                    } else if T.self == Video.self {
+                    } else if T.self == Video.self && fileExtension == "mp4"{
                         passResult(Video(path: item) as! T)
                     }
                 }

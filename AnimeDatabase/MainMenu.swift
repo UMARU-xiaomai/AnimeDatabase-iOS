@@ -13,20 +13,20 @@ struct ContentView: View {
     var body: some View {
         NavigationStack{
             Form {
-                NavigationLink(destination: MangaList(path: .documentsDirectory)){
+                NavigationLink(destination: MangaList(path: .documentsDirectory.appendingPathComponent("Mangas"))){
                     HStack{
                         Image(systemName: "books.vertical.fill")
                         Text("Mangas")
                     }
                 }
-                NavigationLink(destination: MangaList(path: .documentsDirectory)){
+                NavigationLink(destination: VideoList(path: .documentsDirectory.appendingPathComponent("Videos"))){
                     HStack{
                         Image(systemName:"play.rectangle.fill")
                         Text("Videos")
                     }
                 }
                 
-            }.navigationTitle("HentaiDatabase")
+            }.navigationTitle("AnimeDatabase")
         }
     }
 }

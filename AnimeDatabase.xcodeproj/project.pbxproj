@@ -12,8 +12,9 @@
 		BD7E067B2B8E33850088B107 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BD7E067A2B8E33850088B107 /* Assets.xcassets */; };
 		BD7E067E2B8E33850088B107 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BD7E067D2B8E33850088B107 /* Preview Assets.xcassets */; };
 		BD7E06852B8E34240088B107 /* ADData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7E06842B8E34240088B107 /* ADData.swift */; };
-		BD7E06882B8E350A0088B107 /* MangaList.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7E06872B8E350A0088B107 /* MangaList.swift */; };
+		BD7E06882B8E350A0088B107 /* List.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7E06872B8E350A0088B107 /* List.swift */; };
 		BD7E068F2B8E50FD0088B107 /* PDFViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7E068E2B8E50FD0088B107 /* PDFViewer.swift */; };
+		BDF30BF72B8F9853007919EB /* VideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF30BF62B8F9853007919EB /* VideoPlayerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,9 +24,10 @@
 		BD7E067A2B8E33850088B107 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BD7E067D2B8E33850088B107 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		BD7E06842B8E34240088B107 /* ADData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ADData.swift; sourceTree = "<group>"; };
-		BD7E06872B8E350A0088B107 /* MangaList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MangaList.swift; sourceTree = "<group>"; };
+		BD7E06872B8E350A0088B107 /* List.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = List.swift; sourceTree = "<group>"; };
 		BD7E068B2B8E3A600088B107 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		BD7E068E2B8E50FD0088B107 /* PDFViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFViewer.swift; sourceTree = "<group>"; };
+		BDF30BF62B8F9853007919EB /* VideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,9 +64,10 @@
 				BD7E068B2B8E3A600088B107 /* Info.plist */,
 				BD7E06762B8E33820088B107 /* AnimeDatabaseApp.swift */,
 				BD7E06782B8E33820088B107 /* MainMenu.swift */,
-				BD7E06872B8E350A0088B107 /* MangaList.swift */,
+				BD7E06872B8E350A0088B107 /* List.swift */,
 				BD7E067A2B8E33850088B107 /* Assets.xcassets */,
 				BD7E06842B8E34240088B107 /* ADData.swift */,
+				BDF30BF62B8F9853007919EB /* VideoPlayerView.swift */,
 				BD7E067C2B8E33850088B107 /* Preview Content */,
 			);
 			path = AnimeDatabase;
@@ -150,9 +153,10 @@
 			files = (
 				BD7E06792B8E33820088B107 /* MainMenu.swift in Sources */,
 				BD7E06772B8E33820088B107 /* AnimeDatabaseApp.swift in Sources */,
-				BD7E06882B8E350A0088B107 /* MangaList.swift in Sources */,
+				BD7E06882B8E350A0088B107 /* List.swift in Sources */,
 				BD7E068F2B8E50FD0088B107 /* PDFViewer.swift in Sources */,
 				BD7E06852B8E34240088B107 /* ADData.swift in Sources */,
+				BDF30BF72B8F9853007919EB /* VideoPlayerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
