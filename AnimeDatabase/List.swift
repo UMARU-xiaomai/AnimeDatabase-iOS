@@ -6,31 +6,83 @@
 //
 
 import SwiftUI
+import Zip
 
 struct MangaList : View{
     
     @State private var folders:[Folder] = []
     @State private var mangas:[Manga] = []
+    @State private var thumbnails:[UUID:UIImage] = [:]
+    
     let path:URL
     init(path:URL){
         self.path = path
     }
     var body: some View {
         NavigationStack{
-            Form {
+            ScrollView {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 150))], spacing: 20) {
                 ForEach(folders){folder in
-                    NavigationLink(destination: MangaList(path:folder.path)){
-                        HStack{
-                            Image(systemName: "folder.fill")
-                            Text(folder.name)
-                        }
+                    VStack{
+                        NavigationLink(destination: MangaList(path:folder.path)){
+                            
+                            
+                                Image(systemName:"folder.fill")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                            
+                            
+                            
+                        }.frame(width: 125, height: 176)
+                        //                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                        Text(folder.name)
+                            .lineLimit(1)
                     }
                 }
                 ForEach(mangas){manga in
-                    NavigationLink(destination: PDFViewer(pdfURL:manga.path)){
-                        HStack{
-                            Image(systemName: "book.closed.fill")
-                            Text(manga.name)
+                    VStack{
+                        if manga.mangaType == .pdf{
+                            NavigationLink(destination: PDFViewer(pdfURL: manga.path),label:{
+                                ZStack{
+                                    Rectangle()
+                                        .fill(Color(.systemGray))
+                                    Image(systemName: "book.closed.fill")
+                                    
+                                }
+                            }).frame(width: 125, height: 176)
+                            //                            .background(Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }else if manga.mangaType == .zip{
+                            NavigationLink(destination: ZipMangaViewer(zipURL: manga.path),label:{
+                                ZStack{
+                                    Rectangle()
+                                        .fill(Color(.systemGray))
+                                        .onAppear(perform: {
+                                                    unzipFirstFileFromZip(url:manga.path){dir in
+                                                
+                                                        thumbnails[manga.id] = UIImage(contentsOfFile: dir.path)
+                                            }
+                                        })
+                                    if let nn_cur_img_url = thumbnails[manga.id]{
+                                        Image(uiImage: nn_cur_img_url)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                        }else{
+                                            Image(systemName: "doc.zipper")
+                                        }
+                                    
+                                }
+                            }).frame(width: 125, height: 176)
+                            //                            .background(Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                            }
+                        
+                        Text(manga.name)
+                            .lineLimit(1)
                         }
                     }
                 }
@@ -70,20 +122,22 @@ struct VideoList : View{
     }
     var body: some View {
         NavigationStack{
-            Form {
-                ForEach(folders){folder in
-                    NavigationLink(destination: VideoList(path:folder.path)){
-                        HStack{
-                            Image(systemName: "folder.fill")
-                            Text(folder.name)
+            ScrollView {
+                Form {
+                    ForEach(folders){folder in
+                        NavigationLink(destination: VideoList(path:folder.path)){
+                            HStack{
+                                Image(systemName: "folder.fill")
+                                Text(folder.name)
+                            }
                         }
                     }
-                }
-                ForEach(videos){video in
-                    NavigationLink(destination: VideoPlayerView(videoURL: video.path)){
-                        HStack{
-                            Image(systemName: "book.closed.fill")
-                            Text(video.name)
+                    ForEach(videos){video in
+                        NavigationLink(destination: VideoPlayerView(videoURL: video.path)){
+                            HStack{
+                                Image(systemName: "play.rectangle.fill")
+                                Text(video.name)
+                            }
                         }
                     }
                 }
@@ -112,3 +166,4 @@ struct VideoList : View{
                     })
     }
 }
+

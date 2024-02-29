@@ -15,6 +15,9 @@
 		BD7E06882B8E350A0088B107 /* List.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7E06872B8E350A0088B107 /* List.swift */; };
 		BD7E068F2B8E50FD0088B107 /* PDFViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7E068E2B8E50FD0088B107 /* PDFViewer.swift */; };
 		BDF30BF72B8F9853007919EB /* VideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF30BF62B8F9853007919EB /* VideoPlayerView.swift */; };
+		BDF30BF92B8FADD6007919EB /* ZipMangaViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF30BF82B8FADD6007919EB /* ZipMangaViewer.swift */; };
+		BDF30BFF2B8FB1DE007919EB /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = BDF30BFE2B8FB1DE007919EB /* Zip */; };
+		BDF30C012B90C589007919EB /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF30C002B90C589007919EB /* Test.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +31,8 @@
 		BD7E068B2B8E3A600088B107 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		BD7E068E2B8E50FD0088B107 /* PDFViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFViewer.swift; sourceTree = "<group>"; };
 		BDF30BF62B8F9853007919EB /* VideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
+		BDF30BF82B8FADD6007919EB /* ZipMangaViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipMangaViewer.swift; sourceTree = "<group>"; };
+		BDF30C002B90C589007919EB /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BDF30BFF2B8FB1DE007919EB /* Zip in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -67,7 +73,9 @@
 				BD7E06872B8E350A0088B107 /* List.swift */,
 				BD7E067A2B8E33850088B107 /* Assets.xcassets */,
 				BD7E06842B8E34240088B107 /* ADData.swift */,
+				BDF30BF82B8FADD6007919EB /* ZipMangaViewer.swift */,
 				BDF30BF62B8F9853007919EB /* VideoPlayerView.swift */,
+				BDF30C002B90C589007919EB /* Test.swift */,
 				BD7E067C2B8E33850088B107 /* Preview Content */,
 			);
 			path = AnimeDatabase;
@@ -97,6 +105,9 @@
 			dependencies = (
 			);
 			name = AnimeDatabase;
+			packageProductDependencies = (
+				BDF30BFE2B8FB1DE007919EB /* Zip */,
+			);
 			productName = AnimeDatabase;
 			productReference = BD7E06732B8E33820088B107 /* AnimeDatabase.app */;
 			productType = "com.apple.product-type.application";
@@ -125,6 +136,9 @@
 				Base,
 			);
 			mainGroup = BD7E066A2B8E33810088B107;
+			packageReferences = (
+				BDF30BFD2B8FB1DE007919EB /* XCRemoteSwiftPackageReference "Zip" */,
+			);
 			productRefGroup = BD7E06742B8E33820088B107 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -153,8 +167,10 @@
 			files = (
 				BD7E06792B8E33820088B107 /* MainMenu.swift in Sources */,
 				BD7E06772B8E33820088B107 /* AnimeDatabaseApp.swift in Sources */,
+				BDF30BF92B8FADD6007919EB /* ZipMangaViewer.swift in Sources */,
 				BD7E06882B8E350A0088B107 /* List.swift in Sources */,
 				BD7E068F2B8E50FD0088B107 /* PDFViewer.swift in Sources */,
+				BDF30C012B90C589007919EB /* Test.swift in Sources */,
 				BD7E06852B8E34240088B107 /* ADData.swift in Sources */,
 				BDF30BF72B8F9853007919EB /* VideoPlayerView.swift in Sources */,
 			);
@@ -366,6 +382,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		BDF30BFD2B8FB1DE007919EB /* XCRemoteSwiftPackageReference "Zip" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/marmelroy/Zip.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		BDF30BFE2B8FB1DE007919EB /* Zip */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BDF30BFD2B8FB1DE007919EB /* XCRemoteSwiftPackageReference "Zip" */;
+			productName = Zip;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = BD7E066B2B8E33810088B107 /* Project object */;
 }
