@@ -27,7 +27,7 @@ struct ZipMangaViewer: View {
                 extractImagesFromZip()
             }
             .onDisappear{
-                cleanupTempDirectory()
+//                cleanupTempDirectory()
             }
         }
         
@@ -40,9 +40,9 @@ struct ZipMangaViewer: View {
                             return
                         }
                         
-                        print(unzipDirectory)
-                        print(zipURL)
-                        print(progress)
+//                        print(unzipDirectory)
+//                        print(zipURL)
+//                        print(progress)
                         let fileManager = FileManager.default
                         do {
                             let contents = try fileManager.contentsOfDirectory(at: unzipDirectory, includingPropertiesForKeys: nil)
@@ -59,19 +59,7 @@ struct ZipMangaViewer: View {
             }
         }
     
-    func cleanupTempDirectory() {
-        do {
-            let fileManager = FileManager.default
-            let tempDir = NSTemporaryDirectory()
-            let contents = try fileManager.contentsOfDirectory(atPath: tempDir)
-            for item in contents {
-                let itemURL = URL(fileURLWithPath: tempDir).appendingPathComponent(item)
-                try fileManager.removeItem(at: itemURL)
-            }
-        } catch {
-            print("Error cleaning up temp directory: \(error.localizedDescription)")
-        }
-    }
+
     }
 #Preview {
     MangaList(path:.documentsDirectory)

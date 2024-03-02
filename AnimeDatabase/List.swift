@@ -7,16 +7,20 @@
 
 import SwiftUI
 import Zip
+import CryptoKit
+import AVKit
 
 struct MangaList : View{
     
     @State private var folders:[Folder] = []
     @State private var mangas:[Manga] = []
-    @State private var thumbnails:[UUID:UIImage] = [:]
     
+    @State private var thumArr:[UUID:UIImage] = [:]
     let path:URL
     init(path:URL){
         self.path = path
+        
+        
     }
     var body: some View {
         NavigationStack{
@@ -30,6 +34,7 @@ struct MangaList : View{
                                 Image(systemName:"folder.fill")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
+                                .colorMultiply(.accentColor)
                             
                             
                             
@@ -61,13 +66,36 @@ struct MangaList : View{
                                     Rectangle()
                                         .fill(Color(.systemGray))
                                         .onAppear(perform: {
-                                                    unzipFirstFileFromZip(url:manga.path){dir in
+                                            let cur_tem_path = URL.temporaryDirectory.appendingPathComponent("thums").path + "/\(manga.name.md5()!).dat"
+                                            if UIImage(contentsOfFile: cur_tem_path) != nil {
+                                                print("already has a thum!")
                                                 
-                                                        thumbnails[manga.id] = UIImage(contentsOfFile: dir.path)
+                                                
+                                                return
+                                            }else{
+                                                unzipFirstFileFromZip(url:manga.path){dir in
+                                                    if let  img = UIImage(contentsOfFile: dir.path){
+                                                        do{
+                                                            print("###\(cur_tem_path)")
+                                                            try checkAndCreateFolder(FolderURL: .temporaryDirectory.appendingPathComponent("thums"))
+                                                            if let jpegData = img.jpegData(compressionQuality: 0.3){
+                                                                try jpegData.write(to:URL(fileURLWithPath: cur_tem_path))
+                                                                
+                                                                thumArr[manga.id] = img
+                                                            }
+                                                        }catch{
+                                                            print("failed:\(error)")
+                                                        }
+                                                        
+                                                    }else{
+                                                        print("Get cover failed")
+                                                    }
+                                                }
                                             }
                                         })
-                                    if let nn_cur_img_url = thumbnails[manga.id]{
-                                        Image(uiImage: nn_cur_img_url)
+                                    if let res = thumArr[manga.id]{
+                                        
+                                        Image(uiImage: res)
                                             .resizable()
                                             .aspectRatio(contentMode: .fit)
                                         }else{
@@ -86,13 +114,34 @@ struct MangaList : View{
                         }
                     }
                 }
+            }.toolbar(content: {
+                Button(action:{
+                    print("test")
+                }){
+                    Image(systemName: "plus")
+                }
+            })
+            .refreshable{
+                Flush()
             }
         }.onAppear(){
             Flush()
+            
         }
-        Button("Flush"){
-            Flush()
+        .onDisappear(){
+//            NSCache<NSURL, UIImage>().removeAllObjects()
+            do{
+                try Zip.zipFiles(paths: FileManager.default.contentsOfDirectory(at: URL.temporaryDirectory.appendingPathComponent("thums"), includingPropertiesForKeys: nil), zipFilePath:  URL.documentsDirectory.appendingPathComponent("Mangas/thumbnails.zip"), password: nil){progress in
+                    if progress == 1{
+                        print("##Save thums succeed,you can exit now!")
+                    }
+                }
+            }catch{
+                print("Save thum failed")
+            }
         }
+        
+        
 
     }
     
@@ -109,6 +158,30 @@ struct MangaList : View{
             print("[MSG]Add Folder")
             folders.append(folder)
                     })
+        do{
+            try Zip.unzipFile(URL.documentsDirectory.appendingPathComponent("Mangas/thumbnails.zip"), destination: .temporaryDirectory.appendingPathComponent("thums"), overwrite: true, password: nil,progress:{progress in
+                if progress != 1{
+                    return
+                }
+                do{
+                    try mangas.forEach{ manga in
+                        
+                        
+                        let res = try UIImage(data: Data(contentsOf: URL.temporaryDirectory.appendingPathComponent("thums").appendingPathComponent(manga.name.md5()!+".dat")))
+                        if  res != nil {
+                            thumArr[manga.id] = res
+                        }else{
+                            print("thum not found!!!")
+                        }
+                    }
+                }catch{
+                    print("unzip thum failed\(error)")
+                }
+                
+            })
+        }catch{
+            print(error)
+        }
     }
 }
 
@@ -123,31 +196,61 @@ struct VideoList : View{
     var body: some View {
         NavigationStack{
             ScrollView {
-                Form {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 153.6))], spacing: 20) {
                     ForEach(folders){folder in
-                        NavigationLink(destination: VideoList(path:folder.path)){
-                            HStack{
-                                Image(systemName: "folder.fill")
-                                Text(folder.name)
-                            }
+                        VStack{
+                            NavigationLink(destination: VideoList(path:folder.path)){
+                                
+                                    Image(systemName: "folder.fill")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .colorMultiply(.accentColor)
+                                
+                            }.frame(width: 153.6, height: 86.4)
+                            //                            .background(Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                            Text(folder.name)
                         }
                     }
                     ForEach(videos){video in
-                        NavigationLink(destination: VideoPlayerView(videoURL: video.path)){
-                            HStack{
-                                Image(systemName: "play.rectangle.fill")
-                                Text(video.name)
-                            }
+                        VStack{
+                            NavigationLink(destination: VideoPlayerView(videoURL: video.path)){
+                                ZStack{
+                                    Rectangle()
+                                        .fill(Color(.systemGray))
+                                    if let thumbnailImage = generateThumbnail(for: video.path) {
+                                            Image(uiImage: thumbnailImage)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            
+                                            // 在这里使用thumbnailImage，比如显示在UIImageView中
+                                        } else {
+                                            Image(systemName: "play.rectangle.fill")
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                            
+                                        }
+                                    
+                                    
+                                }
+                            }.frame(width: 153.6, height: 86.4)
+                            //                            .background(Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                            Text(video.name)
+                                .lineLimit(1)
                         }
+                        
                     }
                 }
+            }.refreshable{
+                Flush()
             }
         }.onAppear(){
             Flush()
         }
-        Button("Flush"){
-            Flush()
-        }
+        
 
     }
     
@@ -165,5 +268,36 @@ struct VideoList : View{
             folders.append(folder)
                     })
     }
+    func generateThumbnail(for videoURL: URL) -> UIImage? {
+        // 创建AVAsset对象
+        let asset = AVAsset(url: videoURL)
+        
+        // 创建AVAssetImageGenerator对象
+        let imageGenerator = AVAssetImageGenerator(asset: asset)
+        imageGenerator.appliesPreferredTrackTransform = true
+        
+        // 获取视频的第一帧作为预览图
+        do {
+            let cgImage = try imageGenerator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
+            let uiImage = UIImage(cgImage: cgImage)
+            return uiImage
+        } catch {
+            print("Error generating thumbnail: \(error.localizedDescription)")
+            return nil
+        }
+    }
 }
 
+extension String{
+    func md5() -> String? {
+        autoreleasepool{
+            if let data = self.data(using: .utf8) {
+                let digest = SHA256.hash(data: data)
+                let md5String = digest.map { String(format: "%02hhx", $0) }.joined()
+                return md5String
+            } else {
+                return nil
+            }
+        }
+    }
+}

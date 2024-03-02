@@ -7,6 +7,7 @@
 
 import Foundation
 import Zip
+import SwiftUI
 
 enum MangaType{
     case pdf
@@ -64,7 +65,7 @@ func listFiles<T>(atPath path: URL, passResult: (T) -> Void, passDirectory: (Fol
                     if T.self == Manga.self {
                         if fileExtension == "pdf"{
                             passResult(Manga(path: item,mangaType:.pdf) as! T)
-                        }else if fileExtension == "zip"{
+                        }else if fileExtension == "zip" && fileName != "thumbnails.zip"{
                             passResult(Manga(path: item,mangaType: .zip) as! T)
                         }
                             
@@ -84,7 +85,7 @@ func unzipFirstFileFromZip(url: URL,comletion:@escaping (URL) -> Void){
     print(unzipDirectory)
     autoreleasepool {
         do{
-            try Zip.unzipFile(url, destination: unzipDirectory, overwrite: true, password: nil,progress: {progress in
+            try ZipController.instance.addUnzipOperation(zipFilePath:url, destination: unzipDirectory, overwrite: true, password: nil,progress: {progress in
                 if progress != 1{
                     return
                 }
@@ -101,8 +102,8 @@ func unzipFirstFileFromZip(url: URL,comletion:@escaping (URL) -> Void){
                 
                 if let firstFileName = fileNames.first {
                     let firstFilePath = unzipDirectory.appendingPathComponent(firstFileName)
-                    print("First file name:", firstFileName)
-                    print("First file path:", firstFilePath)
+//                    print("First file name:", firstFileName)
+//                    print("First file path:", firstFilePath)
                     comletion(firstFilePath)
                 } else {
                     print("No files found in the zip.")
@@ -115,5 +116,89 @@ func unzipFirstFileFromZip(url: URL,comletion:@escaping (URL) -> Void){
             print("Failed to unzip the file.")
             
         }
+    }
+}
+
+class Thumbnails: Codable{
+    private var content :[String:Data]
+    
+    func SetImg(ofNameMD5 md5:String,uiImg:UIImage){
+        content[md5] = uiImg.jpegData(compressionQuality: 0.3)
+    }
+    func GetImg(ofNameMD5 md5:String) -> UIImage?{
+        if let res = content[md5]{
+            return UIImage(data: res)
+        }else{
+            return nil
+        }
+    }
+    init(){
+        content = [:]
+    }
+}
+
+class ZipController{
+    static var instance = ZipController()
+    private var counter:Int = 0
+    private init(){
+        
+    }
+    let queue = DispatchQueue(label: "com.example.unzipQueue")
+    var isUnzipping = false
+    
+    func addUnzipOperation(zipFilePath: URL, destination: URL, overwrite: Bool, password: String?, progress: @escaping((_ progress: Double) -> ())) throws {
+        queue.async {
+            // 等待前一个解压操作完成
+            self.counter += 1
+            print("Now queue:\(self.counter)")
+            while self.isUnzipping {
+                Thread.sleep(forTimeInterval: 0.1)
+            }
+            
+            // 开始解压操作
+            self.isUnzipping = true
+            autoreleasepool{
+                do{
+                    try Zip.unzipFile(zipFilePath, destination: destination, overwrite: overwrite, password: password,progress: { ori_progress in
+                        progress(ori_progress)
+                        if ori_progress == 1{
+                            self.counter -= 1
+                            print("Now queue:\(self.counter)")
+                            self.isUnzipping = false
+                        }
+                    })
+                }catch{
+                    print("unzip failed")
+                }
+            }
+        }
+    
+    
+    }
+}
+func checkAndCreateFolder(FolderURL:URL) throws {
+    let fileManager = FileManager.default
+        
+            // 检查是否已存在""文件夹
+            if !fileManager.fileExists(atPath: FolderURL.path) {
+                // 若不存在，则创建""文件夹
+                try fileManager.createDirectory(at: FolderURL, withIntermediateDirectories: true, attributes: nil)
+                print("[MSG] folder created successfully\(FolderURL)")
+            } else {
+                print("[MSG] folder already exists\(FolderURL)")
+            }
+        
+    }
+func cleanupTempDirectory() {
+    do {
+        let fileManager = FileManager.default
+        let tempDir = NSTemporaryDirectory()
+        let contents = try fileManager.contentsOfDirectory(atPath: tempDir)
+        for item in contents {
+            let itemURL = URL(fileURLWithPath: tempDir).appendingPathComponent(item)
+            try fileManager.removeItem(at: itemURL)
+        }
+    } catch {
+        print("Error cleaning up temp directory: \(error.localizedDescription)")
     }
 }
