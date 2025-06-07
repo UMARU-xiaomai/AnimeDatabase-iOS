@@ -24,6 +24,7 @@ struct MangaList : View{
     }
     var body: some View {
         NavigationStack{
+            
             ScrollView {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 150))], spacing: 20) {
                 ForEach(folders){folder in
@@ -42,6 +43,7 @@ struct MangaList : View{
                         //                            .background(Color.blue)
                             .foregroundColor(.white)
                             .cornerRadius(10)
+                            
                         Text(folder.name)
                             .lineLimit(1)
                     }
@@ -69,6 +71,9 @@ struct MangaList : View{
                                             let cur_tem_path = URL.temporaryDirectory.appendingPathComponent("thums").path + "/\(manga.name.md5()!).dat"
                                             if UIImage(contentsOfFile: cur_tem_path) != nil {
                                                 print("already has a thum!")
+                                                if let  img = UIImage(contentsOfFile: cur_tem_path){
+                                                    thumArr[manga.id] = img
+                                                }
                                                 
                                                 
                                                 return
@@ -78,7 +83,7 @@ struct MangaList : View{
                                                         do{
                                                             print("###\(cur_tem_path)")
                                                             try checkAndCreateFolder(FolderURL: .temporaryDirectory.appendingPathComponent("thums"))
-                                                            if let jpegData = img.jpegData(compressionQuality: 0.3){
+                                                            if let jpegData = resizeImage(image: img, targetWidth: 320)!.jpegData(compressionQuality: 0.3){
                                                                 try jpegData.write(to:URL(fileURLWithPath: cur_tem_path))
                                                                 
                                                                 thumArr[manga.id] = img
@@ -93,20 +98,28 @@ struct MangaList : View{
                                                 }
                                             }
                                         })
-                                    if let res = thumArr[manga.id]{
+                                        .onDisappear(){
+                                            thumArr[manga.id] = nil
+                                        }
                                         
-                                        Image(uiImage: res)
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
+                                    if thumArr[manga.id] != nil{
+                                        if let res = thumArr[manga.id]{
+                                            
+                                            Image(uiImage: res)
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                            
                                         }else{
                                             Image(systemName: "doc.zipper")
                                         }
-                                    
+                                    }
                                 }
-                            }).frame(width: 125, height: 176)
+                            })
+                            .frame(width: 125, height: 176)
                             //                            .background(Color.blue)
                                 .foregroundColor(.white)
                                 .cornerRadius(10)
+                                
                             }
                         
                         Text(manga.name)
@@ -129,6 +142,7 @@ struct MangaList : View{
             
         }
         .onDisappear(){
+            thumArr = [:]
 //            NSCache<NSURL, UIImage>().removeAllObjects()
             do{
                 try Zip.zipFiles(paths: FileManager.default.contentsOfDirectory(at: URL.temporaryDirectory.appendingPathComponent("thums"), includingPropertiesForKeys: nil), zipFilePath:  URL.documentsDirectory.appendingPathComponent("Mangas/thumbnails.zip"), password: nil){progress in
@@ -250,6 +264,7 @@ struct VideoList : View{
         }.onAppear(){
             Flush()
         }
+        
         
 
     }

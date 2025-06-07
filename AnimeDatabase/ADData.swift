@@ -202,3 +202,16 @@ func cleanupTempDirectory() {
         print("Error cleaning up temp directory: \(error.localizedDescription)")
     }
 }
+
+func resizeImage(image: UIImage, targetWidth: CGFloat) -> UIImage? {
+    let aspectRatio = image.size.width / image.size.height
+    let targetHeight = targetWidth / aspectRatio
+    
+    let newSize = CGSize(width: targetWidth, height: targetHeight)
+    UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+    image.draw(in: CGRect(origin: .zero, size: newSize))
+    let newImage = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+    
+    return newImage
+}
